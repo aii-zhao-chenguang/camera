@@ -3,59 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>web camera</title>
+    <title>camera</title>
     <style>
-        video, canvas {
-            display: block;
-            margin: 10px auto;
+        #photo {
             max-width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 20px;
         }
         #resolution {
-            text-align: center;
             margin-top: 10px;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align:center;">web camera</h1>
-
-    <video id="video" autoplay></video>
-    <button id="captureBtn" style="display: block; margin: 10px auto;">拍照</button>
-    <canvas id="canvas" style="display: none;"></canvas>
+    <input type="file" id="cameraInput" accept="image/*" capture="environment">
+    <img id="photo" src="" alt="拍照结果">
     <p id="resolution">分辨率：<span id="resolutionValue"></span></p>
-
     <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const resolutionText = document.getElementById('resolutionValue');
-        const captureBtn = document.getElementById('captureBtn');
-        
+        document.getElementById('cameraInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
 
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-            })
-            .catch(err => {
-                console.error("Error accessing camera: ", err);
-            });
-
-        // 拍照按钮的点击事件
-        captureBtn.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            // 将当前视频帧绘制到canvas上
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            // 获取图像的分辨率
-            const width = canvas.width;
-            const height = canvas.height;
-            // 显示图像分辨率
-            resolutionText.textContent = `${width} x ${height}`;
-            // 将canvas设置为可见
-            canvas.style.display = 'block';
+                    const imgElement = document.getElementById('photo');
+                    imgElement.src = e.target.result;
+                    const img = new Image();
+                    img.onload = function() {
+                        // 显示分辨率
+                        const resolutionText = `${img.width} x ${img.height}`;
+                        document.getElementById('resolutionValue').textContent = resolutionText;
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
         });
     </script>
-
 </body>
 </html>
