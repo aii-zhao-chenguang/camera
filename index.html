@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>camera</title>
+    <title>拍照功能</title>
     <style>
         #photo {
             max-width: 100%;
@@ -11,33 +11,33 @@
             display: block;
             margin-top: 20px;
         }
-        #resolution {
-            margin-top: 10px;
-            font-size: 18px;
-        }
     </style>
 </head>
 <body>
-
+    <h1>拍照功能示例</h1>
+    <!-- 文件输入框，允许用户选择图片或使用摄像头拍照 -->
     <input type="file" id="cameraInput" accept="image/*" capture="environment">
+    <!-- 显示拍摄的图像 -->
     <img id="photo" src="" alt="拍照结果">
-    <p id="resolution">分辨率：<span id="resolutionValue"></span></p>
+    <!-- 显示图片分辨率 -->
+    <p id="resolution"></p>
+
+    <!-- JavaScript 用于处理图像 -->
     <script>
         document.getElementById('cameraInput').addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-
-                    const imgElement = document.getElementById('photo');
-                    imgElement.src = e.target.result;
-                    const img = new Image();
-                    img.onload = function() {
-                        // 显示分辨率
-                        const resolutionText = `${img.width} x ${img.height}`;
-                        document.getElementById('resolutionValue').textContent = resolutionText;
-                    };
+                    const img = document.getElementById('photo');
                     img.src = e.target.result;
+                    
+                    // 等待图像加载完毕后显示分辨率
+                    img.onload = function() {
+                        const width = img.naturalWidth;
+                        const height = img.naturalHeight;
+                        document.getElementById('resolution').textContent = `分辨率: ${width} x ${height}`;
+                    };
                 };
                 reader.readAsDataURL(file);
             }
